@@ -1,0 +1,70 @@
+node {
+ stage 'Checkout'
+    checkout scm
+
+ stage 'Build'
+    echo 'No build required.'
+
+ // Get UCP Bundle
+ stage 'Get UCP Bundle'
+
+ ucpGetBundle("gutluish-ucp-dev")
+
+ ucpRunCmd "docker info"
+
+ stage 'Code Quality'
+    try{
+      // Run JSHINT linter
+      ucpRunCmd "BUILD_ID=\$BUILD_ID make lint"
+    }finally{
+      ucpRunCmd "BUILD_ID=\$BUILD_ID make clean"
+    }
+
+ stage 'Unit Test'
+    try{
+      // Run unit test with Mocha and SuperTest for HTTPS calls
+      ucpRunCmd "BUILD_ID=\$BUILD_ID make test"
+    }finally{
+      ucpRunCmd "BUILD_ID=\$BUILD_ID make clean"
+    }
+
+ stage 'Integration Test'
+    echo 'Integration test'
+
+ stage 'Acceptance Test'
+    echo 'Acceptance Test'
+
+ stage 'Build'
+    echo 'No deploy(S) in place..!'
+    // Defining parameters for publishing
+    def branch = env.BRANCH_NAME
+    def stackato_target = "https://api.stackato.g4ihos.itcs.hpecorp.net"
+    def stackato_user = env.STACKATO_USER
+    def stackato_pass = env.STACKATO_PASS
+    def stackato_org = "g4ipaas:hpit:w-et-dev:etpaas"
+    def stackato_pass = env.STACKATO_PASS
+    def stackato_space = "sandbox"
+    def stackato_manifest_file = "manifest.yml"
+
+    if (branch == "master") {
+      stackato_space = "sandbox"
+    } else {
+      stackato_space = "sandbox"
+    }
+    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'stackato-creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME']]) {
+      sh "echo  \"\
+    STACKATO_USER=${env.USERNAME}\n\
+    STACKATO_PASS=${env.PASSWORD}\n\
+    STACKATO_SPACE=${stackato_space}\n\
+    STACKATO_ORG=${stackato_org}\n\
+    STACKATO_URL=${stackato_target}\"\
+    > env.list"
+    }
+    ucpRunCmd "ls -la"
+    ucpRunCmd "make build"
+
+stage 'Deploy'
+    ucpRunCmd "STACKATO_ENV_FILE=\$(pwd)/env.list \
+               STACKATO_PARAMS=\"--timeout 1200 --as ${stackato_hostname}\" \
+               make deploy-stackato"
+}

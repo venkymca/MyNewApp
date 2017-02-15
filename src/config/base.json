@@ -1,0 +1,14 @@
+{
+    "registrations": [
+        { "plugin" : {
+            "register": "@hpe/addison-swagger",
+            "options": {
+                "info":{
+                    "version": "1",
+                    "title": "My Hello World API",
+                    "description": "This is my first Hello World application built using Addison"                                                        
+                }
+            }
+        }}
+    ]
+}

@@ -1,0 +1,30 @@
+{
+                "level": {
+                                "console": "debug",
+                                "file": "debug"
+                },
+                "entmonOps": {
+                                "Organization": "",
+                                "Domain": "",
+                                "AppName": "",
+                                "frequency": 60000
+                },
+                "APIDocumentation": {
+                                "APIVersion": "1.0",
+                                "documentationTitle": "",
+                                "documentationDescription": "",
+                                "APIDescription": ""
+                },
+                "connections":[
+                                {
+                                                "host": "localhost",
+                                                "port":"8080",
+                                                "routes":{ "log": true }
+                                }
+                ],
+				"registrations": [
+                                  { "plugin" : { "register": "./src/basicAuth.js", "options": {}
+								  }
+								  }
+                ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "hello-user",
+  "version": "1.0.0",
+  "description": "",
+  "main": "hello-user.js",
+  "author": "cv",
+  "license": "MIT"
+}
